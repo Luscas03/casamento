@@ -2,114 +2,125 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Casamento</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Confirmação de Presença - Casamento</title>
   <style>
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background-color: #ffffff;
       color: #000000;
+      margin: 0;
+      padding: 0;
     }
+
     header {
-      background-color: #000000;
+      background-color: #001f1f;
       color: white;
       text-align: center;
       padding: 2rem 1rem;
     }
+
     header img {
-      width: 200px;
-      border-radius: 100%;
-      margin-bottom: 1rem;
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border-bottom: 4px solid #006b3c;
     }
+
     main {
+      padding: 2rem;
       max-width: 600px;
       margin: auto;
-      padding: 2rem;
     }
+
+    h1, h2 {
+      text-align: center;
+    }
+
     form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
+      background-color: #f9f9f9;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    input, button {
-      padding: 0.75rem;
-      border-radius: 8px;
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1.2rem;
       border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
     }
+
     button {
-      background-color: #013220;
+      background-color: #006b3c;
       color: white;
+      padding: 0.8rem 2rem;
       border: none;
+      border-radius: 6px;
+      font-size: 1rem;
       cursor: pointer;
     }
+
+    button:hover {
+      background-color: #004d2b;
+    }
+
     footer {
       text-align: center;
-      padding: 2rem;
-      background-color: #000;
-      color: white;
+      font-size: 0.9rem;
       margin-top: 3rem;
-    }
-    .mensagem {
-      text-align: center;
-      font-weight: bold;
-      margin-top: 1rem;
+      color: #666;
     }
   </style>
 </head>
 <body>
-  <header>
-    <img src="sua-foto.jpg" alt="Foto do casal" />
-    <h1>Nosso Casamento</h1>
-  </header>
 
-  <main>
-    <h2>Confirme sua presença 2.0</h2>
-    <form id="formPresenca">
-      <input type="text" name="nome" placeholder="Nome completo" required />
-      <input type="tel" name="telefone" placeholder="Telefone" required />
-      <input type="email" name="email" placeholder="Email" required />
-      <input type="text" name="item" placeholder="Deseja contribuir com algo do enxoval?" />
-      <button type="submit">Confirmar Presença</button>
-    </form>
-    <div class="mensagem" id="mensagem"></div>
-  </main>
+<header>
+  <img src="foto-casal.jpg" alt="Foto do casal">
+  <h1>Lucas & Nome</h1>
+  <p>Confirmação de Presença & Lista de Enxoval</p>
+</header>
 
-  <footer>
-    Feito com amor para um dia inesquecível 💚
-  </footer>
+<main>
+  <h2>Confirme sua presença 3.0</h2>
+  <form id="rsvp-form">
+    <input type="text" name="nome" placeholder="Nome completo" required />
+    <input type="tel" name="telefone" placeholder="Telefone (com DDD)" required />
+    <input type="email" name="email" placeholder="E-mail" required />
+    <textarea name="enxoval" placeholder="Deseja contribuir com algum item do enxoval? (opcional)"></textarea>
+    <button type="submit">Confirmar Presença</button>
+  </form>
+</main>
 
-  <script>
-    const formPresenca = document.getElementById("formPresenca");
-    const mensagem = document.getElementById("mensagem");
-    const googleScriptURL = "https://script.google.com/macros/s/AKfycbxAdKGBr752R_EqlhbWWBOX8ctXSd-3hQAD182-E-Ejf_65h-uMSDzAGjm0PsYDsgiuFw/exec";
+<footer>
+  <p>Com carinho, Lucas & Nome ❤️</p>
+</footer>
 
-    formPresenca.addEventListener("submit", async function (e) {
-      e.preventDefault();
-      const formData = new FormData(formPresenca);
-      const data = {};
-      formData.forEach((value, key) => (data[key] = value.trim()));
+<script>
+  const form = document.getElementById("rsvp-form");
+  const googleScriptURL = "https://script.google.com/macros/s/AKfycbxAdKGBr752R_EqlhbWWBOX8ctXSd-3hQAD182-E-Ejf_65h-uMSDzAGjm0PsYDsgiuFw/exec";
 
-      try {
-        const response = await fetch(googleScriptURL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
 
-        const result = await response.json();
-
-        if (result.status === "duplicado") {
-          mensagem.textContent = "Você já confirmou sua presença!";
-        } else {
-          mensagem.textContent = "Confirmação enviada com sucesso!";
-          formPresenca.reset();
-        }
-      } catch (error) {
-        mensagem.textContent = "Erro ao enviar confirmação.";
-        console.error(error);
-      }
+    fetch(googleScriptURL, {
+      method: "POST",
+      mode: "no-cors", // evita bloqueio CORS no GitHub Pages
+      body: formData,
+    })
+    .then(() => {
+      alert("Presença confirmada com sucesso!");
+      form.reset();
+    })
+    .catch((error) => {
+      console.error("Erro:", error);
+      alert("Erro ao enviar confirmação.");
     });
-  </script>
+  });
+</script>
+
 </body>
 </html>
