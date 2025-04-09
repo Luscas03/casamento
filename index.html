@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Casamento</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      color: #000000;
+    }
+    header {
+      background-color: #000000;
+      color: white;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    header img {
+      width: 200px;
+      border-radius: 100%;
+      margin-bottom: 1rem;
+    }
+    main {
+      max-width: 600px;
+      margin: auto;
+      padding: 2rem;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    input, button {
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #013220;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      background-color: #000;
+      color: white;
+      margin-top: 3rem;
+    }
+    .mensagem {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="sua-foto.jpg" alt="Foto do casal" />
+    <h1>Nosso Casamento</h1>
+  </header>
+
+  <main>
+    <h2>Confirme sua presença</h2>
+    <form id="formPresenca">
+      <input type="text" name="nome" placeholder="Nome completo" required />
+      <input type="tel" name="telefone" placeholder="Telefone" required />
+      <input type="email" name="email" placeholder="Email" required />
+      <input type="text" name="item" placeholder="Deseja contribuir com algo do enxoval?" />
+      <button type="submit">Confirmar Presença</button>
+    </form>
+    <div class="mensagem" id="mensagem"></div>
+  </main>
+
+  <footer>
+    Feito com amor para um dia inesquecível 💚
+  </footer>
+
+  <script>
+    const formPresenca = document.getElementById("formPresenca");
+    const mensagem = document.getElementById("mensagem");
+    const googleScriptURL = "https://script.google.com/macros/s/AKfycbxAdKGBr752R_EqlhbWWBOX8ctXSd-3hQAD182-E-Ejf_65h-uMSDzAGjm0PsYDsgiuFw/exec";
+
+    formPresenca.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const formData = new FormData(formPresenca);
+      const data = {};
+      formData.forEach((value, key) => (data[key] = value.trim()));
+
+      try {
+        const response = await fetch(googleScriptURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (result.status === "duplicado") {
+          mensagem.textContent = "Você já confirmou sua presença!";
+        } else {
+          mensagem.textContent = "Confirmação enviada com sucesso!";
+          formPresenca.reset();
+        }
+      } catch (error) {
+        mensagem.textContent = "Erro ao enviar confirmação.";
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>
